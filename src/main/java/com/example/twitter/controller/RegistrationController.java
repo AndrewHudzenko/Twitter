@@ -20,10 +20,7 @@ public class RegistrationController {
     public RegistrationController(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.encoder = encoder;
-
-        ;
     }
-
 
     @GetMapping("/registration")
     public String registration() {

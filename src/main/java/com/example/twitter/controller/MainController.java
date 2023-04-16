@@ -2,7 +2,6 @@ package com.example.twitter.controller;
 
 import com.example.twitter.model.Message;
 import com.example.twitter.repository.MessageRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,6 @@ public class MainController {
         this.messageRepository = messageRepository;
     }
 
-//    @PreAuthorize("hasRole('USER')")
     @GetMapping("/main")
     public String main(Map<String, Object> model) {
         Iterable<Message> messages = messageRepository.findAll();
@@ -29,7 +27,6 @@ public class MainController {
         return "main";
     }
 
-//    @PreAuthorize("hasRole('USER')")
     @PostMapping("/main")
     public String add(@RequestParam String text,
                       @RequestParam String tag,
@@ -43,12 +40,10 @@ public class MainController {
 
         Iterable<Message> messages = messageRepository.findAll();
         model.put("messages", messages);
-//        return "main";
         redirectAttributes.addFlashAttribute("messages", messageRepository.findAll());
         return "redirect:/main";
     }
 
-//    @PreAuthorize("hasRole('USER')")
     @PostMapping("/filter")
     public String filter(@RequestParam String filter, Map<String, Object> model) {
         Iterable<Message> messages;
