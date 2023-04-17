@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.Map;
 
 @Controller
@@ -27,7 +26,7 @@ public class MainController {
         return "main";
     }
 
-    @PostMapping("/main")
+    @PostMapping("/addMessage")
     public String add(@RequestParam String text,
                       @RequestParam String tag,
                       Map<String, Object> model,
