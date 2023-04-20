@@ -1,7 +1,9 @@
 package com.example.twitter.controller;
 
 import com.example.twitter.model.Message;
-import com.example.twitter.repository.MessageRepository;
+import com.example.twitter.model.User;
+import com.example.twitter.service.MessageService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,15 +13,15 @@ import java.util.Map;
 
 @Controller
 public class MainController {
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
 
-    public MainController(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
+    public MainController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @GetMapping("/main")
     public String main(Map<String, Object> model) {
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<Message> messages = messageService.findAll();
 
         model.put("messages", messages);
 
@@ -27,19 +29,21 @@ public class MainController {
     }
 
     @PostMapping("/addMessage")
-    public String add(@RequestParam String text,
+    public String add(@AuthenticationPrincipal User user,
+            @RequestParam String text,
                       @RequestParam String tag,
                       Map<String, Object> model,
                       RedirectAttributes redirectAttributes) {
         Message message = Message.builder()
                 .text(text)
                 .tag(tag)
+                .author(user)
                 .build();
-        messageRepository.save(message);
+        messageService.save(message);
 
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<Message> messages = messageService.findAll();
         model.put("messages", messages);
-        redirectAttributes.addFlashAttribute("messages", messageRepository.findAll());
+        redirectAttributes.addFlashAttribute("messages", messageService.findAll());
         return "redirect:/main";
     }
 
@@ -48,9 +52,9 @@ public class MainController {
         Iterable<Message> messages;
 
         if (filter != null && !filter.isEmpty()) {
-             messages = messageRepository.findByTag(filter);
+             messages = messageService.findByTag(filter);
         } else {
-            messages = messageRepository.findAll();
+            messages = messageService.findAll();
         }
 
         model.put("messages", messages);

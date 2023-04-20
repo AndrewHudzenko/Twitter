@@ -2,7 +2,7 @@ package com.example.twitter;
 
 import com.example.twitter.model.Role;
 import com.example.twitter.model.User;
-import com.example.twitter.repository.UserRepository;
+import com.example.twitter.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,16 +19,16 @@ public class TwitterApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(UserRepository userRepository) {
+    CommandLineRunner commandLineRunner(UserService userService) {
         return args -> {
-            userRepository.save(
+            userService.save(
                     User.builder()
                             .username("admin")
                             .password(encode().encode("1234"))
                             .isActive(true)
                             .roles(Collections.singleton(Role.ADMIN))
                             .build());
-            userRepository.save(
+            userService.save(
                     User.builder()
                             .username("user")
                             .password(encode().encode("1234"))
