@@ -58,7 +58,7 @@ public class MainController {
                 .author(user)
                 .build();
 
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
+        if (!file.isEmpty() && !file.getOriginalFilename().isEmpty()) {
             File uploadDir = new File(uploadPath);
 
             if (!uploadDir.exists()) {
