@@ -24,7 +24,7 @@ public class WebSecurityConfig {
         return http
 //                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration").permitAll()
+                        .requestMatchers("/", "/registration", "/static/**").permitAll()
                         .requestMatchers("/addMessage").hasAuthority(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
@@ -36,5 +36,4 @@ public class WebSecurityConfig {
                 .userDetailsService(jpaUserDetailsService)
                 .build();
     }
-
 }
