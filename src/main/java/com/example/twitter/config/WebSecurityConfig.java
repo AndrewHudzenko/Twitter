@@ -24,8 +24,7 @@ public class WebSecurityConfig {
         return http
 //                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/registration", "/static/**", "/activate/*").permitAll()
-                        .requestMatchers("/addMessage").hasAuthority(Role.ADMIN.toString())
+                        .requestMatchers("/", "/registration", "/addMessage", "/static/**", "/activate/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
