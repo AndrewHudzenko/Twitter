@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  postgresdb:
+    image: postgres:13
+    container_name: postgres
+    restart: always
+    env_file: ./.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_LOCAL_PORT}:${POSTGRES_DOCKER_PORT}
+  app:
+    depends_on:
+      - postgresdb
+    image: buuufy/twitter-docker-app
+    container_name: app
+    build: .
+    env_file: ./.env
+    ports:
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
+    environment:
+      SPRING_APPLICATION_JSON: '{  
+        "spring.datasource.url" : "jdbc:postgresql://postgresdb:${POSTGRES_DOCKER_PORT}/${POSTGRES_DB}",
+        "spring.datasource.username" : "${POSTGRES_USER}",
+        "spring.datasource.password" : "${POSTGRES_PASSWORD}",
+        "spring.datasource.driver-class-name" : "org.postgresql.Driver",
+        "spring.jpa.generate-ddl": false,
+        "spring.jpa.show-sql": false,
+        "spring.jpa.hibernate.ddl-auto": "validate",
+        "spring.freemarker.expose-request-attributes": true,
+        "upload.path": "/C:/Users/User/IdeaProjects/Twitter/uploads",
+        "spring.servlet.multipart.max-file-size": "5MB",
+        "spring.servlet.multipart.max-request-size": "5MB",
+        "spring.mail.host": "smtp.gmail.com",
+        "spring.mail.port": 587,
+        "spring.mail.username": "andrewgudzenko13@gmail.com",
+        "spring.mail.password": "gudvin2002A",
+        "spring.mail.properties.mail.smtp.auth": true,
+        "spring.mail.properties.mail.smtp.starttls.enable": true,
+        "spring.mail.protocol": "smtp",
+        "mail.debug": true
+      }'
