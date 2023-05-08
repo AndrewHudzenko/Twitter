@@ -1,5 +1,8 @@
 package com.example.twitter.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.twitter.model.Message;
 import com.example.twitter.model.User;
 import com.example.twitter.service.MessageService;
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.io.File;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
@@ -24,9 +27,6 @@ public class MainController {
     public MainController(MessageService messageService) {
         this.messageService = messageService;
     }
-
-    @Value("${upload.path}")
-    private String uploadPath;
 
     @GetMapping("/main")
     public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
@@ -51,27 +51,9 @@ public class MainController {
             @RequestParam String tag,
             @RequestParam("file") MultipartFile file,
             Map<String, Object> model,
-            RedirectAttributes redirectAttributes) throws IOException {
-        Message message = Message.builder()
-                .text(text)
-                .tag(tag)
-                .author(user)
-                .build();
-
-        if (!file.isEmpty() && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-            message.setFilename(resultFilename);
-        }
-        messageService.save(message);
+            RedirectAttributes redirectAttributes) {
+        Message finalMessage = messageService.add(text, tag, user, file);
+        messageService.save(finalMessage);
 
         Iterable<Message> messages = messageService.findAll();
         model.put("messages", messages);
